@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 import logging 
-from odoo import api, fields, models  
+from odoo import api, exceptions, fields, models  
 
 _logger = logging.getLogger(__name__)
 
@@ -26,3 +26,10 @@ class TodoWizard(models.TransientModel):
         if vals: 
             self.task_ids.write(vals) 
         return True
+        
+    @api.multi 
+    def do_count_tasks(self): 
+        Task = self.env['todo.task'] 
+        count = Task.search_count([('is_done', '=', False)]) 
+        raise exceptions.Warning(
+              'There are %d active tasks.' %count)
